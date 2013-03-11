@@ -31,7 +31,7 @@ public class WebserviceApp {
 		
 		Server server = component.getServers().add(Protocol.HTTP, HTTP_PORT);  
 		server.getContext().getParameters().add(MAX_THREADS_KEY, MAX_THREADS_VALUE); 
-		component.getDefaultHost().attach( new WebserviceDispatcher() );  
+		component.getDefaultHost().attach( new WebserviceDispatcher());  
 		component.start();
 	}
 	
