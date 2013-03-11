@@ -19,7 +19,7 @@ public class WebserviceApp {
 		webservice = new WebserviceApp();
 	}
 	
-	private WebserviceApp() {}
+	private WebserviceApp() { }
 	
 	public static WebserviceApp getInstance() {
 		return webservice;
