@@ -17,7 +17,6 @@ public class WebserviceDispatcher extends Application{
 	@Override
 	public synchronized Restlet createInboundRoot() {
 		Router router = new Router(getContext());  
-
 		router.attach("/chartContent", ChartContentResource.class);  
 		
 		return router;  
