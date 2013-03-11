@@ -11,7 +11,6 @@ import static analytics.webservice.application.WebservicesParameters.*;
  * @author Razvan Nedelcu
  */
 public class WebserviceApp {
-	MA CAC PE EL!!!
 	private static Component component;
 	private static WebserviceApp webservice;
 	
