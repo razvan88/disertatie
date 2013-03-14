@@ -2,6 +2,8 @@ package analytics.database;
 
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import static analytics.database.DBCredentials.*;
 
@@ -34,6 +36,23 @@ public class DBBasicOperations {
             e.printStackTrace();
         }
     }
+	
+	public List<String> getAvailableProducts() {
+		List<String> products = new ArrayList<String>();
+		try{
+			Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			ResultSet rs = statement.executeQuery("SELECT " + DBCredentials.PROD_NAME + " FROM " + DBCredentials.TABLE_PROD);
+			
+			while(rs.next())
+				products.add(rs.getString(DBCredentials.PROD_NAME));
+			
+		}catch(Exception e)
+		{
+			e.printStackTrace();
+		}
+		
+		return products;
+	}
 
     public void closeConnection() {
         try {

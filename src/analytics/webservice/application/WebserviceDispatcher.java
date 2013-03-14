@@ -4,6 +4,7 @@ package analytics.webservice.application;
 import org.restlet.*;
 import org.restlet.routing.Router;
 
+import analytics.webservice.resources.AvailableProductsResource;
 import analytics.webservice.resources.ChartContentResource;
 
 /**
@@ -18,6 +19,7 @@ public class WebserviceDispatcher extends Application{
 	public synchronized Restlet createInboundRoot() {
 		Router router = new Router(getContext());
 		router.attach("/chartContent", ChartContentResource.class);
+		router.attach("/productsContent", AvailableProductsResource.class);
 		
 		return router;
 	}

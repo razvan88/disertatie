@@ -10,8 +10,10 @@ public interface DBCredentials {
 	String IP = "localhost";
 	String USER = "root";
 	String PASSWORD = "";
-	String DATABASE = "disertatie";
-	String TABLE = "";
+	String DATABASE = "vectsoftges";
+	String TABLE_BON = "iesbonconsumfield";
+	String TABLE_PROD = "articolenom";
+	String PROD_NAME = "denumire";
 	
 	String LINK = "jdbc:mysql://" + IP + "/" + DATABASE + 
 			"?user=" + USER + "&password=" + PASSWORD;
