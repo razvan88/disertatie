@@ -1,10 +1,13 @@
 package analytics.webservice.resources;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 
 import net.sf.json.JSONObject;
 
-import org.restlet.resource.Post;
+import org.restlet.representation.Representation;
+import org.restlet.resource.Get;
 import org.restlet.resource.ServerResource;
 
 import analytics.database.DBBasicOperations;
@@ -17,21 +20,30 @@ import analytics.database.DBBasicOperations;
  */
 public class AvailableProductsResource extends ServerResource {
 	
-	@Post
-	public JSONObject getJsonProducts() {
+	@Get
+	public String getJsonProducts(Representation entity) {
 		DBBasicOperations dataBase = DBBasicOperations.getInstance();
 		dataBase.openConnection();
 		
 		List<String> products = dataBase.getAvailableProducts();
 		JSONObject jsonObj = new JSONObject();
 		
-		for(String product : products) {
-			jsonObj.accumulate("productNames", product);
+		String[] sortedProducts = new String[products.size()];
+		products.toArray(sortedProducts);
+		Arrays.sort(sortedProducts, new Comparator<String>() {
+			public int compare(String s1, String s2){
+				return s1.compareTo(s2);
+			}
+		});
+		
+		for(String product : sortedProducts) {
+			if(!product.startsWith("*"))
+				jsonObj.accumulate("productNames", product);
 		}
 		
 		dataBase.closeConnection();
 		
-		return jsonObj;
+		return jsonObj.toString();
 	}
 
 }
