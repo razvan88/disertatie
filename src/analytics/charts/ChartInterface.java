@@ -1,7 +1,7 @@
 package analytics.charts;
 
-import net.sf.json.JSONObject;
+import net.sf.json.JSONArray;
 
 public interface ChartInterface {
-	public JSONObject getChartData();
+	public JSONArray getChartData();
 }

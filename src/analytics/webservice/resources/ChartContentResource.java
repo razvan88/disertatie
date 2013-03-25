@@ -36,15 +36,30 @@ public class ChartContentResource extends ServerResource {
 		String chartType = jsonUserInput.getString("chartType");
 		JSONArray productsObject = jsonUserInput.getJSONArray("products");
 		
+		boolean greaterStartingYear = Integer.parseInt(startingDateTokens[2]) > Integer.parseInt(endingDateTokens[2]);
+		boolean greaterStartingMonth = greaterStartingYear && 
+				(Integer.parseInt(startingDateTokens[0]) > Integer.parseInt(endingDateTokens[0]));
+		boolean greaterStartingDay = greaterStartingYear && greaterStartingMonth && 
+				(Integer.parseInt(startingDateTokens[1]) > Integer.parseInt(endingDateTokens[1]));
+		if(greaterStartingYear || greaterStartingMonth || greaterStartingDay){
+			String[] startingCopy = startingDateTokens.clone();
+			for(int i = 0; i < startingDateTokens.length; i++) {
+				startingDateTokens[i] = endingDateTokens[i];
+				endingDateTokens[i] = startingCopy[i];
+			}
+		}
+		
 		GregorianCalendar calendar = new GregorianCalendar();
 		calendar.set(Integer.parseInt(startingDateTokens[2]),
-					 Integer.parseInt(startingDateTokens[0]),
-					 Integer.parseInt(startingDateTokens[1]));
+					 Integer.parseInt(startingDateTokens[0]) - 1,
+					 Integer.parseInt(startingDateTokens[1]),
+					 0, 0, 1);
 		Date startingDate = calendar.getTime();
 		calendar.clear();
 		calendar.set(Integer.parseInt(endingDateTokens[2]),
-					 Integer.parseInt(endingDateTokens[0]),
-					 Integer.parseInt(endingDateTokens[1]));
+					 Integer.parseInt(endingDateTokens[0]) - 1,
+					 Integer.parseInt(endingDateTokens[1]),
+					 23, 59, 59);
 		Date endingDate = calendar.getTime();
 		List<String> products = new ArrayList<String>();
 		
