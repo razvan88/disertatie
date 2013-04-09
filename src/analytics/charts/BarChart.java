@@ -5,7 +5,7 @@ import java.util.List;
 
 public class BarChart extends ColumnChart{
 	
-	public BarChart(Date startingDate, Date endingDate, List<String> products) {
-		super(startingDate, endingDate, products);
+	public BarChart(Date startingDate, Date endingDate, List<String> daysFilter, List<String> products) {
+		super(startingDate, endingDate, daysFilter, products);
 	}
 }
