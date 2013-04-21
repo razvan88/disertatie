@@ -1,4 +1,4 @@
-package analytics.charts;
+package analytics.reports.charts;
 
 
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package analytics.webservice.resources;
+package analytics.webservice.resources.reports;
 
 import java.util.Arrays;
 import java.util.Comparator;

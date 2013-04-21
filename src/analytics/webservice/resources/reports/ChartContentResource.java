@@ -1,4 +1,4 @@
-package analytics.webservice.resources;
+package analytics.webservice.resources.reports;
 
 
 import java.io.IOException;
@@ -13,7 +13,7 @@ import org.restlet.representation.Representation;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
 
-import analytics.charts.ChartFactory;
+import analytics.reports.charts.ChartFactory;
 import analytics.utils.DateUtils;
 
 
