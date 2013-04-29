@@ -1,16 +1,17 @@
 package analytics.database;
 
 
+import static analytics.database.DBCredentials.DRIVER;
+import static analytics.database.DBCredentials.LINK;
+
 import java.sql.Connection;
 import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
-
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
-
-import static analytics.database.DBCredentials.*;
 
 
 /**
@@ -29,10 +30,16 @@ public class DBBasicOperations {
 	
 	private DBBasicOperations() {}
 	
+	/**
+	 * @return an instance of the DBBasicOperations class
+	 */
 	public static DBBasicOperations getInstance() {
 		return dbConnection;
 	}
 	
+	/**
+	 * This method is the first one that should be called after obtaining an instance of the DBBasicOperations class
+	 */
 	public void openConnection() {
         try {
 			Class.forName(DRIVER).newInstance();
@@ -42,6 +49,9 @@ public class DBBasicOperations {
         }
     }
 	
+	/**
+	 * @return a list containing all the products' names
+	 */
 	public List<String> getAvailableProducts() {
 		List<String> products = new ArrayList<String>();
 		try{
@@ -102,7 +112,99 @@ public class DBBasicOperations {
 		}
 		return value;
 	}
+	
+	/**
+	 * @return a HashMap that has as key the transaction's code and as value the list of consumed products' codes
+	 */
+	public HashMap<Integer, List<Integer>> getTransactions() {
+		HashMap<Integer, List<Integer>> transactions = new HashMap<Integer, List<Integer>>();
+		
+		try {
+			String query = "SELECT " + DBCredentials.BON_CODBON + ", " + 
+							DBCredentials.BON_CODART + " FROM " + DBCredentials.TABLE_BON;
+			Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			ResultSet resultSet = statement.executeQuery(query);
+			
+			while(resultSet.next()) {
+				Integer nrBon = resultSet.getInt(DBCredentials.BON_CODBON);
+				Integer codArt = resultSet.getInt(DBCredentials.BON_CODART);
+				
+				if(codArt == 0) {
+					//THIS IS A DATABASE BUG!!!
+					continue;
+				}
+				
+				if(transactions.containsKey(nrBon) &&
+						!transactions.get(nrBon).contains(codArt)) {
+					transactions.get(nrBon).add(codArt);
+				} else {
+					ArrayList<Integer> list = new ArrayList<Integer>();
+					list.add(codArt);
+					transactions.put(nrBon, list);
+				}
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return transactions;
+	}
+	
+	/**
+	 * @return a HashMap that has as key the product's code and as value the product's name
+	 */
+	public HashMap<Integer,String> getProducts() {
+		HashMap<Integer, String> products = new HashMap<Integer, String>();
+		
+		try {
+			String query = "SELECT " + DBCredentials.PROD_CODE + ", " + 
+							DBCredentials.PROD_NAME + " FROM " + DBCredentials.TABLE_PROD;
+			Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			ResultSet resultSet = statement.executeQuery(query);
+			
+			while(resultSet.next()) {
+				Integer prodCode = resultSet.getInt(DBCredentials.PROD_CODE);
+				String prodName = resultSet.getString(DBCredentials.PROD_NAME);
+				
+				if(prodName.startsWith("*")){
+					continue;
+				}
+				
+				if(!products.containsKey(prodCode)) {
+					products.put(prodCode, prodName);
+				}
+			}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return products;
+	}
+	
+	public List<String> getNamesForFroducts(List<Integer> codes) {
+		List<String> prods = new ArrayList<String>();
+		
+		//TODO - prepared statements
+		try {
+			String query = "SELECT " + DBCredentials.PROD_NAME + " FROM " + DBCredentials.TABLE_PROD +
+					" WHERE " + DBCredentials.PROD_CODE + " = ";
+			Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
+			ResultSet resultSet = statement.executeQuery(query);
+			
+			while(resultSet.next()) {
+				
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return prods;
+	}
 
+	/**
+	 * Closes the connection with the database.
+	 * This is the last function that should be called.
+	 */
     public void closeConnection() {
         try {
             connection.close();

@@ -12,10 +12,14 @@ public interface DBCredentials {
 	String PASSWORD = "";
 	
 	String DATABASE = "vectsoftges";
+	
 	String TABLE_BON = "iesbonconsumfield";
 	String TABLE_PROD = "articolenom";
+	
 	String PROD_NAME = "denumire";
 	String PROD_CODE = "c";
+	
+	String BON_CODBON = "codbonconsum";
 	String BON_CODART = "codarticol";
 	String BON_CANT = "cantitate";
 	String BON_DATE = "data";

@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.7"/>
-	<classpathentry kind="lib" path="D:/Mihai/Licenta/LicentaProj/m/lib/mysql-connector-java-5.1.16.jar"/>
-	<classpathentry kind="lib" path="D:/Mihai/Licenta/LicentaProj/m/lib/org.restlet.jar"/>
+	<classpathentry exported="true" kind="lib" path="D:/scoala/disertatie/Backend/lib/json-lib-2.4-jdk15.jar"/>
+	<classpathentry exported="true" kind="lib" path="D:/scoala/disertatie/Backend/lib/mysql-connector-java-5.1.16.jar"/>
+	<classpathentry exported="true" kind="lib" path="D:/scoala/disertatie/Backend/lib/org.restlet.jar"/>
+	<classpathentry exported="true" kind="lib" path="D:/scoala/disertatie/Backend/lib/commons-lang-2.3.jar"/>
+	<classpathentry exported="true" kind="lib" path="D:/scoala/disertatie/Backend/lib/ezmorph-1.0.6.jar"/>
+	<classpathentry exported="true" kind="lib" path="D:/scoala/disertatie/Backend/lib/commons-logging-1.1.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="D:/scoala/disertatie/Backend/lib/commons-collections-3.2.1.jar"/>
+	<classpathentry exported="true" kind="lib" path="D:/scoala/disertatie/Backend/lib/commons-beanutils-1.8.3.jar"/>
+	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="lib" path="D:/scoala/disertatie/Backend/lib/weka.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
