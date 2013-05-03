@@ -44,9 +44,29 @@ public class DataChanges {
 		for(String token : tokens) {
 			if(!target.contains(token)) {
 				foundAny = false;
+				break;
 			}
 		}
 		
 		return foundAny;
+	}
+	
+	public static int[] getIntFromString(String[] columns) {
+		int[] cols = new int[columns.length];
+		for(int i = 0; i < columns.length; i++) {
+			cols[i] = Integer.parseInt(columns[i]);
+		}
+		
+		return cols;
+	}
+	
+	public static Integer[] getIntFromString(String columns) {
+		String[] cols = columns.split(",");
+		Integer[] values = new Integer[cols.length];
+		for(int i = 0; i < cols.length; i++) {
+			values[i] = Integer.parseInt(cols[i].trim());
+		}
+		
+		return values;
 	}
 }

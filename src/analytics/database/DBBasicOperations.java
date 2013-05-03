@@ -1,8 +1,7 @@
 package analytics.database;
 
 
-import static analytics.database.DBCredentials.DRIVER;
-import static analytics.database.DBCredentials.LINK;
+import static analytics.database.DBCredentials.*;
 
 import java.sql.Connection;
 import java.sql.Date;
@@ -12,6 +11,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.sql.PreparedStatement;
 
 
 /**
@@ -56,10 +56,10 @@ public class DBBasicOperations {
 		List<String> products = new ArrayList<String>();
 		try{
 			Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			ResultSet rs = statement.executeQuery("SELECT " + DBCredentials.PROD_NAME + " FROM " + DBCredentials.TABLE_PROD);
+			ResultSet rs = statement.executeQuery("SELECT " + PROD_NAME + " FROM " + TABLE_PROD);
 			
 			while(rs.next())
-				products.add(rs.getString(DBCredentials.PROD_NAME));
+				products.add(rs.getString(PROD_NAME));
 			
 		}catch(Exception e)
 		{
@@ -73,11 +73,11 @@ public class DBBasicOperations {
 		int value = 0;
 		try {
 			String query =
-				"SELECT SUM(bons." + DBCredentials.BON_CANT + ") " +
-				"FROM " + DBCredentials.TABLE_PROD + " prods, " + DBCredentials.TABLE_BON + " bons " + 
-				"WHERE bons." +  DBCredentials.BON_DATE + "='" + day + "' AND " +
-						"bons." + DBCredentials.BON_CODART + "=prods." + DBCredentials.PROD_CODE + " AND " +
-						"prods." + DBCredentials.PROD_NAME + "='" + product + "'";
+				"SELECT SUM(bons." + BON_CANT + ") " +
+				"FROM " + TABLE_PROD + " prods, " + TABLE_BON + " bons " + 
+				"WHERE bons." +  BON_DATE + "='" + day + "' AND " +
+						"bons." + BON_CODART + "=prods." + PROD_CODE + " AND " +
+						"prods." + PROD_NAME + "='" + product + "'";
 			
 			Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			ResultSet resultSet = statement.executeQuery(query);
@@ -95,11 +95,11 @@ public class DBBasicOperations {
 		int value = 0;
 		try {
 			String query =
-				"SELECT SUM(bons." + DBCredentials.BON_CANT + ") " +
-				"FROM " + DBCredentials.TABLE_PROD + " prods, " + DBCredentials.TABLE_BON + " bons " + 
-				"WHERE bons." +  DBCredentials.BON_DATE + " BETWEEN '" + ini + "' AND '" + fin + "' AND " +
-						"bons." + DBCredentials.BON_CODART + "=prods." + DBCredentials.PROD_CODE + " AND " +
-						"prods." + DBCredentials.PROD_NAME + "='" + product + "'";
+				"SELECT SUM(bons." + BON_CANT + ") " +
+				"FROM " + TABLE_PROD + " prods, " + TABLE_BON + " bons " + 
+				"WHERE bons." +  BON_DATE + " BETWEEN '" + ini + "' AND '" + fin + "' AND " +
+						"bons." + BON_CODART + "=prods." + PROD_CODE + " AND " +
+						"prods." + PROD_NAME + "='" + product + "'";
 			
 			Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			ResultSet resultSet = statement.executeQuery(query);
@@ -120,23 +120,23 @@ public class DBBasicOperations {
 		HashMap<Integer, List<Integer>> transactions = new HashMap<Integer, List<Integer>>();
 		
 		try {
-			String query = "SELECT " + DBCredentials.BON_CODBON + ", " + 
-							DBCredentials.BON_CODART + " FROM " + DBCredentials.TABLE_BON;
+			String query = "SELECT " + BON_CODBON + ", " + BON_CODART + " FROM " + TABLE_BON;
 			Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			ResultSet resultSet = statement.executeQuery(query);
 			
 			while(resultSet.next()) {
-				Integer nrBon = resultSet.getInt(DBCredentials.BON_CODBON);
-				Integer codArt = resultSet.getInt(DBCredentials.BON_CODART);
+				Integer nrBon = resultSet.getInt(BON_CODBON);
+				Integer codArt = resultSet.getInt(BON_CODART);
 				
 				if(codArt == 0) {
 					//THIS IS A DATABASE BUG!!!
 					continue;
 				}
 				
-				if(transactions.containsKey(nrBon) &&
-						!transactions.get(nrBon).contains(codArt)) {
-					transactions.get(nrBon).add(codArt);
+				if(transactions.containsKey(nrBon)){
+					if(!transactions.get(nrBon).contains(codArt)) {
+						transactions.get(nrBon).add(codArt);
+					}
 				} else {
 					ArrayList<Integer> list = new ArrayList<Integer>();
 					list.add(codArt);
@@ -157,14 +157,13 @@ public class DBBasicOperations {
 		HashMap<Integer, String> products = new HashMap<Integer, String>();
 		
 		try {
-			String query = "SELECT " + DBCredentials.PROD_CODE + ", " + 
-							DBCredentials.PROD_NAME + " FROM " + DBCredentials.TABLE_PROD;
+			String query = "SELECT " + PROD_CODE + ", " + PROD_NAME + " FROM " + TABLE_PROD;
 			Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
 			ResultSet resultSet = statement.executeQuery(query);
 			
 			while(resultSet.next()) {
-				Integer prodCode = resultSet.getInt(DBCredentials.PROD_CODE);
-				String prodName = resultSet.getString(DBCredentials.PROD_NAME);
+				Integer prodCode = resultSet.getInt(PROD_CODE);
+				String prodName = resultSet.getString(PROD_NAME);
 				
 				if(prodName.startsWith("*")){
 					continue;
@@ -181,19 +180,21 @@ public class DBBasicOperations {
 		return products;
 	}
 	
-	public List<String> getNamesForFroducts(List<Integer> codes) {
+	public List<String> getNamesForProducts(Integer[] codes) {
 		List<String> prods = new ArrayList<String>();
 		
-		//TODO - prepared statements
 		try {
-			String query = "SELECT " + DBCredentials.PROD_NAME + " FROM " + DBCredentials.TABLE_PROD +
-					" WHERE " + DBCredentials.PROD_CODE + " = ";
-			Statement statement = connection.createStatement(ResultSet.TYPE_SCROLL_SENSITIVE, ResultSet.CONCUR_READ_ONLY);
-			ResultSet resultSet = statement.executeQuery(query);
+			String query = "SELECT " + PROD_NAME + " FROM " + TABLE_PROD + " WHERE " + PROD_CODE + " = ?";
+			PreparedStatement statement = connection.prepareStatement(query);
 			
-			while(resultSet.next()) {
-				
+			for(Integer code : codes) {
+				statement.setInt(1, code);
+				ResultSet resultSet = statement.executeQuery();
+				if (resultSet.next()) {
+					prods.add(resultSet.getString(PROD_NAME));
+				}
 			}
+			
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
