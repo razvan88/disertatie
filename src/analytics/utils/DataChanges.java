@@ -3,6 +3,9 @@ package analytics.utils;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
 
 
 public class DataChanges {
@@ -68,5 +71,30 @@ public class DataChanges {
 		}
 		
 		return values;
+	}
+	
+	public static Integer getKeyForValue(HashMap<Integer, String> hashMap, String value) {
+		Integer key = null;
+		
+		if(hashMap.containsValue(value)) {
+			for(Integer keyObj : hashMap.keySet()) {
+				if(hashMap.get(keyObj).equals(value)) {
+					key = keyObj;
+					break;
+				}
+			}
+		}
+		
+		return key;
+	}
+	
+	public static List<Integer> getListFromArray(int[] array) {
+		List<Integer> result = new ArrayList<Integer>();
+		
+		for(Integer t : array) {
+			result.add(t);
+		}
+		
+		return result;
 	}
 }
