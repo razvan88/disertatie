@@ -233,7 +233,7 @@ public class AprioriHelper {
 		allProducts.addAll(determinedProducts);
 		double allSupp = AprioriHelper.getSupportForProducts(allProducts, products, sortedCodes, allData);
 		
-		return allSupp / baseSupp;
+		return baseSupp > 0.0 ? (allSupp / baseSupp) : 0;
 	}
 	
 	public static double getConfidenceWithIndexes(List<Integer> baseProductsIndexes, 
@@ -245,7 +245,7 @@ public class AprioriHelper {
 		double allProdsSupport = AprioriHelper.getColumnsSupport(allData, allProds);
 		double baseProdsSupport = AprioriHelper.getColumnsSupport(allData, baseProductsIndexes);
 		
-		return allProdsSupport / baseProdsSupport;
+		return baseProdsSupport > 0.0 ? (allProdsSupport / baseProdsSupport) : 0;
 	}
 	
 	public static void displaySupportResults(List<List<String>> results, Double support) {

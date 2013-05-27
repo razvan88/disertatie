@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -43,9 +44,10 @@ public class DataChanges {
 	public static boolean containsTokens(String target, String rawToken) {
 		boolean foundAny = true;
 		String[] tokens = rawToken.split(",");
+		List<String> targetList = Arrays.asList(target.split(","));
 		
 		for(String token : tokens) {
-			if(!target.contains(token)) {
+			if(!targetList.contains(token)) {
 				foundAny = false;
 				break;
 			}

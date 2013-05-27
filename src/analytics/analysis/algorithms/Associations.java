@@ -67,9 +67,10 @@ public class Associations {
 				int[] cols = DataChanges.getIntFromString(columns);
 				double supp = AprioriHelper.getColumnsSupport(this.data, cols);
 				if(supp < support) {
-					//TODO - is this needed here anymore? Check and remove
-					combinations = AprioriHelper.removeColumnsCombination(combinations, combination, belowSupp);
-					i--;
+					//NOTE: this is not needed anymore as only one entry will be removed
+					//combinations = AprioriHelper.removeColumnsCombination(combinations, combination, belowSupp);
+					//i--;
+					belowSupp.add(combination);
 				} else {
 					if (!pairs.containsKey(combination)) {
 						pairs.put(combination, supp);
@@ -104,7 +105,7 @@ public class Associations {
 		return products;
 	}
 	
-	private double getSupportForProducts(List<String> selectedProducts) {
+	public double getSupportForProducts(List<String> selectedProducts) {
 		return AprioriHelper.getSupportForProducts(selectedProducts, 
 				this.products, this.sortedCodes, this.data);
 	}
@@ -115,7 +116,7 @@ public class Associations {
 	 * @param determinedProducts Y
 	 * @return the confidence
 	 */
-	private double getConfidenceWithNames(List<String> baseProducts, List<String> determinedProducts) {
+	public double getConfidenceWithNames(List<String> baseProducts, List<String> determinedProducts) {
 		return AprioriHelper.getConfidenceWithNames(baseProducts, determinedProducts, 
 				this.products, this.sortedCodes, this.data);
 	}
@@ -132,7 +133,7 @@ public class Associations {
 	 * @param confidence confidence coefficient. If 0, all combinations above 0 will be returned
 	 * @return Y
 	 */
-	private HashMap<String, Double> getDeterminedProducts(List<String> baseProducts, double confidence) {
+	public HashMap<String, Double> getDeterminedProducts(List<String> baseProducts, double confidence) {
 		HashMap<String, Double> confidenceCoefficient = new HashMap<String, Double>();
 		List<String> zeroSupp = new ArrayList<String>();
 		int columnsNo = this.data[0].length;
@@ -162,7 +163,7 @@ public class Associations {
 
 				if(supp != 0 && confidence < conf) {
 					if(!confidenceCoefficient.containsKey(combination)) {
-						confidenceCoefficient.put(combination, supp);
+						confidenceCoefficient.put(combination, conf);
 					} else {
 						throw new RuntimeException("Try to add duplicate key in support dictionary!");
 					}
@@ -175,9 +176,9 @@ public class Associations {
 		return confidenceCoefficient;
 	}
 	
-	public static void main(String[] args) {
-		Associations alg = new Associations();
-		alg.buildData();
+	//public static void main(String[] args) {
+		//Associations alg = new Associations();
+		//alg.buildData();
 		
 		//double supp = 0.05;
 		//HashMap<String, Double> res = alg.runAlgorithm(supp);
@@ -199,5 +200,5 @@ public class Associations {
 		//double conf = 0.1;
 		//List<List<String>> result = alg.getResults(alg.getDeterminedProducts(prods, conf));
 		//AprioriHelper.displayConfidenceResults(result, prods, conf);
-	}
+	//}
 }
