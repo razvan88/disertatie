@@ -3,7 +3,7 @@ package analytics.webservice.application;
 import org.restlet.*;
 import org.restlet.data.Protocol;
 
-import static analytics.webservice.application.WebservicesParameters.*;
+import analytics.utils.ConfigurationSettings;
 
 /**
  * This class starts and stops the webservice
@@ -29,8 +29,13 @@ public class WebserviceApp {
 		if(component.isStarted())
 			return;
 		
-		Server server = component.getServers().add(Protocol.HTTP, HTTP_PORT);  
-		server.getContext().getParameters().add(MAX_THREADS_KEY, MAX_THREADS_VALUE); 
+		ConfigurationSettings config = ConfigurationSettings.getInstance();
+		int httpPort = Integer.parseInt(config.getValue("server", "httpPort"));
+		String maxThreadsKey = config.getValue("server", "maxThreadsKey");
+		String maxThreadsVal = config.getValue("server", "maxThreadsValue");
+		
+		Server server = component.getServers().add(Protocol.HTTP, httpPort);  
+		server.getContext().getParameters().add(maxThreadsKey, maxThreadsVal); 
 		component.getDefaultHost().attach(new WebserviceDispatcher());  
 		component.start();
 	}
