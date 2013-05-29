@@ -14,8 +14,8 @@ import org.restlet.representation.Representation;
 import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
 
-import analytics.analysis.algorithms.AprioriAlgorithm;
-import analytics.analysis.algorithms.Associations;
+import analytics.analysis.algorithms.apriori.AprioriAlgorithm;
+import analytics.analysis.algorithms.apriori.Associations;
 
 public class ProductsDeterminations extends ServerResource {
 

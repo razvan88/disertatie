@@ -18,6 +18,7 @@ public interface DBCredentials {
 	
 	String PROD_NAME = "denumire";
 	String PROD_CODE = "c";
+	String PROD_CATEGORY = "categorie";
 	
 	String BON_CODBON = "codbonconsum";
 	String BON_CODART = "codarticol";

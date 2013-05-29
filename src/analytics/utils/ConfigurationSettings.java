@@ -1,6 +1,8 @@
 package analytics.utils;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.ini4j.Ini;
 
@@ -29,8 +31,13 @@ public class ConfigurationSettings {
 		}
 	}
 	
-	public String getValue(String section, String key) {
-		Ini.Section sec = iniFile.get(section);
-		return sec.get(key);
+	public List<String> getSectionValues(String sectionName) {
+		Ini.Section section = iniFile.get(sectionName);
+		return new ArrayList<String>(section.values());
+	}
+	
+	public String getValue(String sectionName, String key) {
+		Ini.Section section = iniFile.get(sectionName);
+		return section.get(key);
 	}
 }

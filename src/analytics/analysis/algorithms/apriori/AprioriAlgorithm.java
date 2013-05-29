@@ -1,4 +1,4 @@
-package analytics.analysis.algorithms;
+package analytics.analysis.algorithms.apriori;
 
 public class AprioriAlgorithm {
 	private static Associations associations;

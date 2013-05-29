@@ -1,4 +1,4 @@
-package analytics.analysis.algorithms;
+package analytics.analysis.algorithms.apriori;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -12,7 +12,7 @@ import analytics.utils.DataChanges;
 
 public class Associations {
 	private int data[][];
-	private final String dataFileName = "input.in";
+	//private final String dataFileName = "input.in";
 	private List<Integer> sortedCodes = null;
 	private HashMap<Integer, String> products = null;
 	private HashMap<String, Double> results = null;
@@ -42,7 +42,7 @@ public class Associations {
 			this.data[rows++] = row;
 		}
 		
-		DataChanges.writeDataToFile(this.dataFileName, this.data);
+		//DataChanges.writeDataToFile(this.dataFileName, this.data);
 	}
 	
 	/**

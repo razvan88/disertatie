@@ -1,4 +1,4 @@
-package analytics.analysis.algorithms;
+package analytics.analysis.algorithms.apriori;
 
 import java.io.File;
 import java.io.FileOutputStream;

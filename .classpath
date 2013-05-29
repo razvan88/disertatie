@@ -11,5 +11,6 @@
 	<classpathentry exported="true" kind="lib" path="D:/scoala/disertatie/Backend/lib/commons-beanutils-1.8.3.jar"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
 	<classpathentry kind="lib" path="D:/scoala/disertatie/Backend/lib/weka.jar"/>
+	<classpathentry kind="lib" path="D:/scoala/disertatie/Backend/lib/ini4j-0.5.2.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

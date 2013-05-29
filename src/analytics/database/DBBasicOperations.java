@@ -9,6 +9,7 @@ import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.sql.PreparedStatement;
@@ -148,6 +149,42 @@ public class DBBasicOperations {
 		}
 		
 		return transactions;
+	}
+	
+	/**
+	 * @return a HashMap that has as key the transaction's code and as value the list of consumed products' category
+	 */
+	public HashMap<Integer, List<String>> getCategories() {
+		HashMap<Integer, List<String>> categories = new HashMap<Integer, List<String>>();
+		HashMap<Integer, List<Integer>> transactions = this.getTransactions();
+		
+		try {
+			String query = "SELECT " + PROD_CATEGORY + " FROM " + TABLE_PROD + " WHERE " + PROD_CODE + " = ?";
+			PreparedStatement statement = connection.prepareStatement(query);
+			
+			List<Integer> codes = new ArrayList<Integer>(transactions.keySet());
+			Collections.sort(codes);
+			for(int code : codes) {
+				categories.put(code, new ArrayList<String>());
+				List<Integer> prods = transactions.get(code);
+				for(int prod : prods) {
+					statement.setInt(1, prod);
+					ResultSet resultSet = statement.executeQuery();
+					if (resultSet.next()) {
+						String category = resultSet.getString(PROD_CATEGORY);
+						List<String> categs = categories.get(code);
+						if(!categs.contains(category)) {
+							categs.add(category);
+						}
+					}
+				}
+			}
+			
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return categories;
 	}
 	
 	/**
