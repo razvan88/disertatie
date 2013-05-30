@@ -8,9 +8,14 @@ public class DbscanHelper {
 	private static List<String> categories;
 	private static List<Integer> weights;
 	private static DbscanHelper instance;
+	public static final int epsilon;
+	public static final int minElems;
 	
 	static{
 		instance = new DbscanHelper();
+		ConfigurationSettings config = ConfigurationSettings.getInstance();
+		epsilon = Integer.parseInt(config.getValue("clustering", "eps"));
+		minElems = Integer.parseInt(config.getValue("clustering", "min"));
 		buildData();
 	}
 	
