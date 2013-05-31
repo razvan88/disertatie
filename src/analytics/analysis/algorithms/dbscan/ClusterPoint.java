@@ -5,12 +5,14 @@ public class ClusterPoint {
 	private int billCode;
 	private boolean wasVisited;
 	private boolean isNoise;
+	private boolean isClusterMember;
 	
 	public ClusterPoint(int value, int billCode) {
 		this.value = value;
 		this.billCode = billCode;
 		this.wasVisited = false;
 		this.isNoise = false;
+		this.isClusterMember = false;
 	}
 	
 	public int getValue() {
@@ -43,5 +45,13 @@ public class ClusterPoint {
 	
 	public void setNoise(boolean noise) {
 		this.isNoise = noise;
+	}
+	
+	public boolean isClusterMember() {
+		return this.isClusterMember;
+	}
+	
+	public void setClusterMember(boolean clusterMember) {
+		this.isClusterMember = clusterMember;
 	}
 }

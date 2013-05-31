@@ -33,25 +33,50 @@ public class Clustering {
 			if(point.wasVisited())
 				continue;
 			point.setVisited(true);
-			List<ClusterPoint> neighbors = this.getNeighbors(point);
+			List<ClusterPoint> neighbors = this.getNeighbors(point, rawPoints, DbscanHelper.epsilon);
 			if(neighbors.size() < DbscanHelper.minElems)
 				point.setNoise(true);
 			else {
-				List<ClusterPoint> cluster = expandCluster(point, neighbors);
+				List<ClusterPoint> cluster = expandCluster(point, neighbors, rawPoints, DbscanHelper.epsilon, DbscanHelper.minElems);
 				clusters.add(cluster);
 			}
 				
 		}
 	}
 	
-	private List<ClusterPoint> getNeighbors(ClusterPoint point) {
-		return null;
-		//TODO
+	private List<ClusterPoint> getNeighbors(ClusterPoint point, List<ClusterPoint> allPoints, int eps) {
+		List<ClusterPoint> neighbors = new ArrayList<ClusterPoint>();
+		neighbors.add(point);
+		int refVal = point.getValue();
+		
+		for(ClusterPoint p : allPoints) {
+			if(Math.abs(p.getValue() - refVal) <= eps)
+				neighbors.add(p);
+		}
+		return neighbors;
 	}
 	
-	private List<ClusterPoint> expandCluster(ClusterPoint root, List<ClusterPoint> neighbors) {
-		return null;
-		//TODO
+	private List<ClusterPoint> expandCluster(ClusterPoint root, List<ClusterPoint> rootNeighbors, List<ClusterPoint> allPoints, int eps, int minElems) {
+		List<ClusterPoint> cluster = new ArrayList<ClusterPoint>();
+		
+		cluster.add(root);
+		root.setClusterMember(true);
+		
+		for(ClusterPoint point : rootNeighbors) {
+			if(!point.wasVisited()) {
+				point.setVisited(true);
+				List<ClusterPoint> pointNeighbors = this.getNeighbors(point, allPoints, eps);
+				if(pointNeighbors.size() >= minElems) {
+					rootNeighbors.addAll(pointNeighbors);
+				}
+			}
+			if(!point.isClusterMember()) {
+				point.setClusterMember(true);
+				cluster.add(point);
+			}
+		}
+		
+		return cluster;
 	}
 	
 }
