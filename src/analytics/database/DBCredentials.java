@@ -11,19 +11,23 @@ public interface DBCredentials {
 	String USER = "root";
 	String PASSWORD = "";
 	
-	String DATABASE = "vectsoftges";
+	String DATABASE = "disertatie";
 	
-	String TABLE_BON = "iesbonconsumfield";
-	String TABLE_PROD = "articolenom";
+	String TABLE_BON = "bonuri";
+	String TABLE_PROD = "produse";
+	String TABLE_CLASS = "clase";
 	
-	String PROD_NAME = "denumire";
 	String PROD_CODE = "c";
-	String PROD_CATEGORY = "categorie";
+	String PROD_NAME = "denumire";
+	String PROD_CATEGORY = "clasa";
 	
 	String BON_CODBON = "codbonconsum";
 	String BON_CODART = "codarticol";
 	String BON_CANT = "cantitate";
 	String BON_DATE = "data";
+	
+	String CLASS_CODE = "cod";
+	String CLASS_NAME = "denumire";
 	
 	String LINK = "jdbc:mysql://" + IP + "/" + DATABASE + 
 			"?user=" + USER + "&password=" + PASSWORD;

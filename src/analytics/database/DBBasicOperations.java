@@ -159,7 +159,9 @@ public class DBBasicOperations {
 		HashMap<Integer, List<Integer>> transactions = this.getTransactions();
 		
 		try {
-			String query = "SELECT " + PROD_CATEGORY + " FROM " + TABLE_PROD + " WHERE " + PROD_CODE + " = ?";
+			String query = "SELECT a." + CLASS_NAME + ", b." + PROD_CATEGORY +  
+						" FROM " + TABLE_CLASS + " a, " + TABLE_PROD + " b" +
+						" WHERE b." + PROD_CODE + " = ? AND a." + CLASS_CODE + " = b." + PROD_CATEGORY;
 			PreparedStatement statement = connection.prepareStatement(query);
 			
 			List<Integer> codes = new ArrayList<Integer>(transactions.keySet());
@@ -171,11 +173,15 @@ public class DBBasicOperations {
 					statement.setInt(1, prod);
 					ResultSet resultSet = statement.executeQuery();
 					if (resultSet.next()) {
-						String category = resultSet.getString(PROD_CATEGORY);
+						String category = resultSet.getString(CLASS_NAME);
+						//this allows duplicates
+						categories.get(code).add(category);
+						/*this does not allow duplicates
 						List<String> categs = categories.get(code);
 						if(!categs.contains(category)) {
 							categs.add(category);
 						}
+						*/
 					}
 				}
 			}

@@ -10,10 +10,12 @@ import analytics.utils.DbscanHelper;
 public class Clustering {
 	private List<ClusterPoint> rawPoints;
 	private List<List<ClusterPoint>> clusters;
+	private DbscanHelper dbscanHelper;
 	
 	public Clustering() {
 		rawPoints = new ArrayList<ClusterPoint>();
 		clusters = new ArrayList<List<ClusterPoint>>();
+		dbscanHelper = DbscanHelper.getInstance();
 	}
 	
 	public void initData() {
@@ -22,7 +24,6 @@ public class Clustering {
 		HashMap<Integer, List<String>> categories = db.getCategories();
 		db.closeConnection();
 		
-		DbscanHelper dbscanHelper = DbscanHelper.getInstance();
 		for(Integer key : categories.keySet()) {
 			rawPoints.add(new ClusterPoint(dbscanHelper.getValue(categories.get(key)), key));
 		}
@@ -33,36 +34,39 @@ public class Clustering {
 			if(point.wasVisited())
 				continue;
 			point.setVisited(true);
-			List<ClusterPoint> neighbors = this.getNeighbors(point, rawPoints, DbscanHelper.epsilon);
+			int pointEps = dbscanHelper.getEpsilonValue(point.getValue());
+			List<ClusterPoint> neighbors = this.getNeighbors(point, rawPoints, pointEps);
 			if(neighbors.size() < DbscanHelper.minElems)
 				point.setNoise(true);
 			else {
-				List<ClusterPoint> cluster = expandCluster(point, neighbors, rawPoints, DbscanHelper.epsilon, DbscanHelper.minElems);
+				List<ClusterPoint> cluster = expandCluster(point, neighbors, 
+						rawPoints, pointEps, DbscanHelper.minElems);
 				clusters.add(cluster);
-			}
-				
+			}	
 		}
 	}
 	
 	private List<ClusterPoint> getNeighbors(ClusterPoint point, List<ClusterPoint> allPoints, int eps) {
 		List<ClusterPoint> neighbors = new ArrayList<ClusterPoint>();
-		neighbors.add(point);
 		int refVal = point.getValue();
 		
 		for(ClusterPoint p : allPoints) {
 			if(Math.abs(p.getValue() - refVal) <= eps)
 				neighbors.add(p);
 		}
+		
 		return neighbors;
 	}
 	
-	private List<ClusterPoint> expandCluster(ClusterPoint root, List<ClusterPoint> rootNeighbors, List<ClusterPoint> allPoints, int eps, int minElems) {
+	private List<ClusterPoint> expandCluster(ClusterPoint root, 
+				List<ClusterPoint> rootNeighbors, List<ClusterPoint> allPoints, int eps, int minElems) {
 		List<ClusterPoint> cluster = new ArrayList<ClusterPoint>();
 		
 		cluster.add(root);
 		root.setClusterMember(true);
 		
-		for(ClusterPoint point : rootNeighbors) {
+		for(int i = 0; i < rootNeighbors.size(); i++) {
+			ClusterPoint point = rootNeighbors.get(i);
 			if(!point.wasVisited()) {
 				point.setVisited(true);
 				List<ClusterPoint> pointNeighbors = this.getNeighbors(point, allPoints, eps);
@@ -79,4 +83,16 @@ public class Clustering {
 		return cluster;
 	}
 	
+	public List<List<ClusterPoint>> getClusters() {
+		return this.clusters;
+	}
+	
+	//for testing purpose
+	public static void main(String[] args) {
+		Clustering alg = new Clustering();
+		alg.initData();
+		alg.runAlgorithm();
+		List<List<ClusterPoint>> clusters = alg.getClusters();
+		System.out.println(clusters);
+	}
 }

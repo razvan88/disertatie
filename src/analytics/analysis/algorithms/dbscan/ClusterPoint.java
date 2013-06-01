@@ -54,4 +54,9 @@ public class ClusterPoint {
 	public void setClusterMember(boolean clusterMember) {
 		this.isClusterMember = clusterMember;
 	}
+	
+	@Override
+	public String toString() {
+		return this.billCode + ": " + this.value;
+	}
 }
