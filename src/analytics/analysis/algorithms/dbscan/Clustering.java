@@ -11,7 +11,7 @@ public class Clustering {
 	private List<ClusterPoint> rawPoints;
 	private List<List<ClusterPoint>> clusters;
 	private DbscanHelper dbscanHelper;
-	DBBasicOperations dataBase;
+	private DBBasicOperations dataBase;
 	
 	public Clustering() {
 		rawPoints = new ArrayList<ClusterPoint>();
@@ -98,10 +98,9 @@ public class Clustering {
 		return integerClusters;
 	}
 	
-	public List<List<String>> getMostConsumedProductsForEachCluster() {
+	public List<List<String>> getMostConsumedProductsForEachCluster(int menuItemsNo) {
 		List<List<String>> prods = new ArrayList<List<String>>();
 		
-		int menuItemsNo = DbscanHelper.menuItemsNo;
 		for(List<Integer> cluster : this.getClustersAsIntegers()) {
 			prods.add(this.dbscanHelper.getMostConsumedProducts(cluster, menuItemsNo));
 		}
@@ -109,13 +108,27 @@ public class Clustering {
 		return prods;
 	}
 	
-	//for testing purpose
+	/*for testing purpose
 	public static void main(String[] args) {
 		Clustering alg = new Clustering();
 		alg.initData();
 		alg.runAlgorithm();
-		List<List<String>> consumed = alg.getMostConsumedProductsForEachCluster();
+		List<List<String>> consumed = alg.getMostConsumedProductsForEachCluster(3);
 		
-		System.out.println(consumed);
+		JSONObject allMenus = new JSONObject();
+		for(List<String> menu : consumed) {
+			JSONObject products = new JSONObject();
+			for(String product : menu) {
+				if(menu.indexOf(product) > 0) {
+					products.accumulate("products", product);
+				} else {
+					products.put("category", product);
+				}
+			}
+			allMenus.accumulate("menus", products);
+		}
+		
+		System.out.println(allMenus.toString());
 	}
+	*/
 }

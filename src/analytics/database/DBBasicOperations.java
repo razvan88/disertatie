@@ -194,6 +194,51 @@ public class DBBasicOperations {
 	}
 	
 	/**
+	 * @return a String corresponding to the most of the parameter list of elements' category
+	 */
+	public String getCategory(List<Integer> productsCodes) {
+		List<String> categories = new ArrayList<String>();
+		List<Integer> occurences = new ArrayList<Integer>();
+		
+		try {
+			String query = "SELECT a." + CLASS_NAME + ", b." + PROD_CATEGORY +
+						" FROM " + TABLE_CLASS + " a, " + TABLE_PROD + " b" +
+						" WHERE b." + PROD_CODE + " = ? AND a." + CLASS_CODE + " = b." + PROD_CATEGORY;
+			PreparedStatement statement = connection.prepareStatement(query);
+			
+			for(int code : productsCodes) {
+					statement.setInt(1, code);
+					ResultSet resultSet = statement.executeQuery();
+					if (resultSet.next()) {
+						String category = resultSet.getString(CLASS_NAME);
+						if(!categories.contains(category)) {
+							int index = categories.size();
+							categories.add(category);
+							occurences.add(index, new Integer(1));
+						} else {
+							int index = categories.indexOf(category);
+							int val = occurences.get(index);
+							occurences.remove(index);
+							occurences.add(index, new Integer(val + 1));
+						}
+					}
+				}
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		int max = Integer.MIN_VALUE;
+		int maxIndex = -1;
+		for(Integer occurence : occurences) {
+			if(occurence.intValue() > max) {
+				max = occurence.intValue();
+				maxIndex = occurences.indexOf(occurence);
+			}
+		}
+		return categories.get(maxIndex);
+	}
+	
+	/**
 	 * @return a HashMap that has as key the product's code and as value the product's name
 	 */
 	public HashMap<Integer,String> getProducts() {

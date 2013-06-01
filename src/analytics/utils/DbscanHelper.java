@@ -26,9 +26,6 @@ public class DbscanHelper {
 	private String epsilonMathFn;
 	private int[] epsilonInterval;
 	
-	//TODO -remove this as it will be received from GUI
-	public static final int menuItemsNo;
-	
 	static{
 		weights = new ArrayList<Integer>();
 		dataBase = DBBasicOperations.getInstance();
@@ -36,7 +33,6 @@ public class DbscanHelper {
 		epsilon = config.getValue("clustering", "epsilon");
 		minElems = Integer.parseInt(config.getValue("clustering", "minNeighbors"));
 		minClusterPoints = Integer.parseInt(config.getValue("clustering", "minClusterPoints"));
-		menuItemsNo = Integer.parseInt(config.getValue("menu", "menuItems"));
 		buildData();
 		
 		dataBase.openConnection();
@@ -235,6 +231,11 @@ public class DbscanHelper {
 		return this.getProductNames(codes);
 	}
 	
+	/**
+	 * 
+	 * @param products list of products codes
+	 * @return list of products names BUT on the first position the common products category
+	 */
 	private List<String> getProductNames(List<Integer> products) {
 		List<String> names;
 		Integer[] prods = new Integer[products.size()];
@@ -242,6 +243,7 @@ public class DbscanHelper {
 		
 		dataBase.openConnection();
 		names = dataBase.getNamesForProducts(prods);
+		names.add(0, dataBase.getCategory(products));
 		dataBase.closeConnection();
 		
 		return names;

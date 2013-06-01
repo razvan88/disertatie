@@ -4,6 +4,7 @@ package analytics.webservice.application;
 import org.restlet.*;
 import org.restlet.routing.Router;
 
+import analytics.webservice.resources.analysis.MenuCreation;
 import analytics.webservice.resources.analysis.ProductsAssociations;
 import analytics.webservice.resources.analysis.ProductsDeterminations;
 import analytics.webservice.resources.reports.AvailableProductsResource;
@@ -26,6 +27,8 @@ public class WebserviceDispatcher extends Application{
 		
 		router.attach("/productsAssociations", ProductsAssociations.class);
 		router.attach("/productsDeterminations", ProductsDeterminations.class);
+		
+		router.attach("/menuCreation", MenuCreation.class);
 		
 		return router;
 	}
