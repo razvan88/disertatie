@@ -1,7 +1,10 @@
 package analytics.utils;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import analytics.database.DBBasicOperations;
 
 public class DbscanHelper {
 	private static final String categoriesSection = "prodCategories";
@@ -11,6 +14,9 @@ public class DbscanHelper {
 	private static DbscanHelper instance;
 	private static final String epsilon;
 	public static final int minElems;
+	public static final int minClusterPoints;
+	private static HashMap<Integer, List<Integer>> bills;
+	private static DBBasicOperations dataBase;
 	
 	private boolean isEpsilonNumeric;
 	private int numericEpsilon;
@@ -20,12 +26,22 @@ public class DbscanHelper {
 	private String epsilonMathFn;
 	private int[] epsilonInterval;
 	
+	//TODO -remove this as it will be received from GUI
+	public static final int menuItemsNo;
+	
 	static{
 		weights = new ArrayList<Integer>();
+		dataBase = DBBasicOperations.getInstance();
 		ConfigurationSettings config = ConfigurationSettings.getInstance();
-		epsilon = config.getValue("clustering", "eps");
-		minElems = Integer.parseInt(config.getValue("clustering", "min"));
+		epsilon = config.getValue("clustering", "epsilon");
+		minElems = Integer.parseInt(config.getValue("clustering", "minNeighbors"));
+		minClusterPoints = Integer.parseInt(config.getValue("clustering", "minClusterPoints"));
+		menuItemsNo = Integer.parseInt(config.getValue("menu", "menuItems"));
 		buildData();
+		
+		dataBase.openConnection();
+		bills = dataBase.getTransactions();
+		dataBase.closeConnection();
 		
 		instance = new DbscanHelper();
 	}
@@ -121,5 +137,113 @@ public class DbscanHelper {
 		}
 		
 		return new int[] {x, y};
+	}
+	
+	private boolean listContains(List<Integer> elems, int val) {
+		for(Integer elem : elems) {
+			if(elem.intValue() == val) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+	
+	private int listIndexOf(List<Integer> elems, int val) {
+		for(Integer elem : elems) {
+			if(elem.intValue() == val) {
+				return elems.indexOf(elem);
+			}
+		}
+		
+		return -1;
+	}
+	
+	private int listMinValue(List<Integer> elems) {
+		int min = Integer.MAX_VALUE;
+		for(Integer elem : elems) {
+			if(elem.intValue() < min) {
+				min = elem.intValue();
+			}
+		}
+		return min;
+	}
+	
+	private List<Integer> listGetMaximumValuesIndexes(List<Integer> elems, int no) {
+		List<Integer> indexes = new ArrayList<Integer>();
+		boolean ready = false;
+		int peak = Integer.MIN_VALUE;
+		int maxValue = 0;
+		int minValue = this.listMinValue(elems);
+		
+		//compute the peak value
+		for(Integer elem : elems) {
+			if(elem.intValue() >= peak) {
+				peak = elem.intValue();
+			}
+		}
+		
+		maxValue = peak;
+		while(!ready) {
+			for(int i = 0; i < elems.size(); i++) {
+				Integer elem = elems.get(i).intValue();
+				//always take the maximum values
+				if(elem == maxValue) {
+					indexes.add(i);
+					if(--no == 0) {
+						ready = true;
+						break;
+					}
+				}
+			}
+			maxValue--;
+			if(maxValue < minValue) {
+				break;
+			}
+		}
+		
+		return indexes;
+	}
+	
+	public List<String> getMostConsumedProducts(List<Integer> billCodes, int howMany) {
+		List<Integer> productsCodes = new ArrayList<Integer>();
+		List<Integer> productsSales = new ArrayList<Integer>();
+		
+		for(int billCode : billCodes) {
+			List<Integer> prods = bills.get(billCode);
+			for(int prodCode : prods) {
+				if(!this.listContains(productsCodes, prodCode)) {
+					productsCodes.add(prodCode);
+				}
+				int prodIndex = this.listIndexOf(productsCodes, prodCode);
+				if(productsSales.size() < prodIndex + 1) {
+					productsSales.add(prodIndex, new Integer(1));
+				}  else {
+					int val = productsSales.get(prodIndex).intValue();
+					productsSales.remove(prodIndex);
+					productsSales.add(prodIndex, new Integer(val) + 1);
+				}
+			}
+		}
+		
+		List<Integer> pozs = this.listGetMaximumValuesIndexes(productsSales, howMany);
+		List<Integer> codes = new ArrayList<Integer>();
+		for(int poz : pozs) {
+			codes.add(productsCodes.get(poz).intValue());
+		}
+		
+		return this.getProductNames(codes);
+	}
+	
+	private List<String> getProductNames(List<Integer> products) {
+		List<String> names;
+		Integer[] prods = new Integer[products.size()];
+		products.toArray(prods);
+		
+		dataBase.openConnection();
+		names = dataBase.getNamesForProducts(prods);
+		dataBase.closeConnection();
+		
+		return names;
 	}
 }

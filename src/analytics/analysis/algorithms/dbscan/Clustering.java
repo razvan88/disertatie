@@ -11,18 +11,19 @@ public class Clustering {
 	private List<ClusterPoint> rawPoints;
 	private List<List<ClusterPoint>> clusters;
 	private DbscanHelper dbscanHelper;
+	DBBasicOperations dataBase;
 	
 	public Clustering() {
 		rawPoints = new ArrayList<ClusterPoint>();
 		clusters = new ArrayList<List<ClusterPoint>>();
 		dbscanHelper = DbscanHelper.getInstance();
+		this.dataBase = DBBasicOperations.getInstance();
 	}
 	
 	public void initData() {
-		DBBasicOperations db = DBBasicOperations.getInstance();
-		db.openConnection();
-		HashMap<Integer, List<String>> categories = db.getCategories();
-		db.closeConnection();
+		this.dataBase.openConnection();
+		HashMap<Integer, List<String>> categories = this.dataBase.getCategories();
+		this.dataBase.closeConnection();
 		
 		for(Integer key : categories.keySet()) {
 			rawPoints.add(new ClusterPoint(dbscanHelper.getValue(categories.get(key)), key));
@@ -41,7 +42,9 @@ public class Clustering {
 			else {
 				List<ClusterPoint> cluster = expandCluster(point, neighbors, 
 						rawPoints, pointEps, DbscanHelper.minElems);
-				clusters.add(cluster);
+				if(cluster.size() >= DbscanHelper.minClusterPoints) {
+					clusters.add(cluster);
+				}
 			}	
 		}
 	}
@@ -83,8 +86,27 @@ public class Clustering {
 		return cluster;
 	}
 	
-	public List<List<ClusterPoint>> getClusters() {
-		return this.clusters;
+	private List<List<Integer>> getClustersAsIntegers() {
+		List<List<Integer>> integerClusters = new ArrayList<List<Integer>>();
+		for(List<ClusterPoint> intCluster : this.clusters) {
+			List<Integer> cluster = new ArrayList<Integer>();
+			for(ClusterPoint point : intCluster) {
+				cluster.add(new Integer(point.getBillCode()));
+			}
+			integerClusters.add(cluster);
+		}
+		return integerClusters;
+	}
+	
+	public List<List<String>> getMostConsumedProductsForEachCluster() {
+		List<List<String>> prods = new ArrayList<List<String>>();
+		
+		int menuItemsNo = DbscanHelper.menuItemsNo;
+		for(List<Integer> cluster : this.getClustersAsIntegers()) {
+			prods.add(this.dbscanHelper.getMostConsumedProducts(cluster, menuItemsNo));
+		}
+		
+		return prods;
 	}
 	
 	//for testing purpose
@@ -92,7 +114,8 @@ public class Clustering {
 		Clustering alg = new Clustering();
 		alg.initData();
 		alg.runAlgorithm();
-		List<List<ClusterPoint>> clusters = alg.getClusters();
-		System.out.println(clusters);
+		List<List<String>> consumed = alg.getMostConsumedProductsForEachCluster();
+		
+		System.out.println(consumed);
 	}
 }
