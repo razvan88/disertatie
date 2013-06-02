@@ -4,9 +4,10 @@ package analytics.webservice.application;
 import org.restlet.*;
 import org.restlet.routing.Router;
 
-import analytics.webservice.resources.analysis.MenuCreation;
-import analytics.webservice.resources.analysis.ProductsAssociations;
-import analytics.webservice.resources.analysis.ProductsDeterminations;
+import analytics.webservice.resources.analysis.MenuCategoriesResource;
+import analytics.webservice.resources.analysis.MenuCreationResource;
+import analytics.webservice.resources.analysis.ProductsAssociationsResource;
+import analytics.webservice.resources.analysis.ProductsDeterminationsResource;
 import analytics.webservice.resources.reports.AvailableProductsResource;
 import analytics.webservice.resources.reports.ChartContentResource;
 
@@ -25,10 +26,11 @@ public class WebserviceDispatcher extends Application{
 		router.attach("/chartContent", ChartContentResource.class);
 		router.attach("/productsContent", AvailableProductsResource.class);
 		
-		router.attach("/productsAssociations", ProductsAssociations.class);
-		router.attach("/productsDeterminations", ProductsDeterminations.class);
+		router.attach("/productsAssociations", ProductsAssociationsResource.class);
+		router.attach("/productsDeterminations", ProductsDeterminationsResource.class);
 		
-		router.attach("/menuCreation", MenuCreation.class);
+		router.attach("/productsCategories", MenuCategoriesResource.class);
+		router.attach("/menuCreation", MenuCreationResource.class);
 		
 		return router;
 	}

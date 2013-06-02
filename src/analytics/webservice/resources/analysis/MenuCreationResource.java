@@ -4,21 +4,23 @@ import java.util.List;
 
 import net.sf.json.JSONObject;
 
-import org.restlet.resource.Get;
+import org.restlet.data.Form;
+import org.restlet.representation.Representation;
+import org.restlet.resource.Post;
 import org.restlet.resource.ServerResource;
 
 import analytics.analysis.algorithms.dbscan.Clustering;
 import analytics.analysis.algorithms.dbscan.DBSCAN;
 
-public class MenuCreation extends ServerResource{
+public class MenuCreationResource extends ServerResource{
 
 	/*
 	 * userData={menuItemsNo: 3}
 	 */
 	
-	@Get
-	public String getMenus() {
-		String stringJson = this.getQuery().getValues("userData");
+	@Post
+	public String getMenus(Representation entity) {
+		String stringJson = new Form(this.getRequestEntity()).getValues("userData");
 		JSONObject json = JSONObject.fromObject(stringJson);
 		int menuItemsNo = json.getInt("menuItemsNo");
 		

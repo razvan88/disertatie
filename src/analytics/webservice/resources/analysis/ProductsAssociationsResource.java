@@ -17,7 +17,7 @@ import org.restlet.resource.ServerResource;
 import analytics.analysis.algorithms.apriori.AprioriAlgorithm;
 import analytics.analysis.algorithms.apriori.Associations;
 
-public class ProductsAssociations extends ServerResource {
+public class ProductsAssociationsResource extends ServerResource {
 
 	@Post
 	public String getJsonAssociations(Representation entity) {
