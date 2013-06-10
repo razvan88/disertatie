@@ -46,6 +46,14 @@ public class AprioriHelper {
 		return allCombinations;
 	}
 	
+	private static boolean listContainsToken(List<String> elements, String tokens) {
+		for(String element : elements) {
+			if(element.contains(tokens))
+				return true;
+		}
+		return false;
+	}
+	
 	private static List<String> getFilteredRecursiveCombinations(int minIndex, int maxIndex, 
 			int remainedLength, List<String> undesiredCombinations) {
 		List<String> combinations = new ArrayList<String>();
@@ -60,6 +68,9 @@ public class AprioriHelper {
 			combinations.add(partialCombinationPrefix);
 		
 		int nextRecursiveMinIndex = minIndex + 1;
+		while(undesiredCombinations.contains(((Integer)nextRecursiveMinIndex).toString()) ||
+				AprioriHelper.listContainsToken(undesiredCombinations, String.format("%s,%s", minIndex, nextRecursiveMinIndex)))
+			nextRecursiveMinIndex++;
 
 		while(nextRecursiveMinIndex <= maxIndex && remainedLength > 0) {
 			List<String> unprefixed = AprioriHelper.getFilteredRecursiveCombinations(nextRecursiveMinIndex, 
@@ -69,7 +80,11 @@ public class AprioriHelper {
 				 combinations.add(partialCombinationPrefix + partialCombinationUnprefixed);
 			}
 			
-			nextRecursiveMinIndex += 1;
+			nextRecursiveMinIndex++;
+			
+			while(undesiredCombinations.contains(((Integer)(nextRecursiveMinIndex)).toString()) ||
+					AprioriHelper.listContainsToken(undesiredCombinations, String.format("%s,%s", minIndex, nextRecursiveMinIndex)))
+				nextRecursiveMinIndex++;
 		}
 		
 		return combinations;
@@ -106,6 +121,9 @@ public class AprioriHelper {
 			combinations.add(partialCombinationPrefix);
 		
 		int nextRecursiveMinIndex = minIndex + 1;
+		while(zeroSupp.contains(((Integer)nextRecursiveMinIndex).toString()) ||
+				AprioriHelper.listContainsToken(zeroSupp, String.format("%s,%s", minIndex, nextRecursiveMinIndex)))
+			nextRecursiveMinIndex++;
 
 		while(nextRecursiveMinIndex <= maxIndex && remainedLength > 0) {
 			if(!customColumns.contains(nextRecursiveMinIndex)){
@@ -116,7 +134,12 @@ public class AprioriHelper {
 					 combinations.add(partialCombinationPrefix + partialCombinationUnprefixed);
 				}
 			}
-			nextRecursiveMinIndex += 1;
+			
+			nextRecursiveMinIndex++;
+			
+			while(zeroSupp.contains(((Integer)(nextRecursiveMinIndex)).toString()) ||
+					AprioriHelper.listContainsToken(zeroSupp, String.format("%s,%s", minIndex, nextRecursiveMinIndex)))
+				nextRecursiveMinIndex++;
 		}
 		
 		return combinations;
